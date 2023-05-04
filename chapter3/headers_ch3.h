@@ -1,7 +1,9 @@
 #pragma once
+#include <cstdint>
 #include <deque>
 
-#if defined LIST_3_3
+#if !defined(LIST_3_3)
+#define LIST_3_3
 
 template <typename T, typename Container = std::deque<T>> class stack
 {
@@ -18,7 +20,7 @@ template <typename T, typename Container = std::deque<T>> class stack
     template <class Alloc> stack(stack &&, const Alloc &);
 
     bool empty() const;
-    size_t size() const;
+    std::size_t size() const;
     T &top();
     T const &top() const;
     void push(T const &);
@@ -28,5 +30,10 @@ template <typename T, typename Container = std::deque<T>> class stack
 
     template <class... Args> void emplace(Args &&...args); // C++14的新特性
 };
+
+#endif
+
+#if !defined(LIST_3_6)
+#define LIST_3_6
 
 #endif
