@@ -1,1 +1,1 @@
-cd ./build && cmake .. && make -j4 && ./a.out
+cd ./build && cmake .. && make -j4 && clear && ./a.out
