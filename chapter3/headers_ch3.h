@@ -1,7 +1,9 @@
 #pragma once
 #include <cstdint>
 #include <deque>
+#include <map>
 #include <mutex>
+#include <shared_mutex>
 
 #if !defined(LIST_3_3)
 #define LIST_3_3
@@ -141,4 +143,110 @@ public:
     return lhs_value == rhs_value;          // 4
   }
 };
+#endif
+
+#ifndef LISt_3_12
+#define LISt_3_12
+
+struct connection_info
+{};
+
+struct connection_handle;
+struct connection_manager_type;
+
+struct data_packet
+{};
+
+struct connection_handle
+{
+  void
+  send_data(data_packet const& obj)
+  {
+  }
+
+  data_packet
+  receive_data()
+  {
+    return {};
+  }
+};
+
+struct connection_manager_type
+{
+  connection_handle
+  open(connection_info& arg)
+  {
+    return {};
+  }
+};
+
+connection_manager_type connection_manager;
+
+class X12
+{
+private:
+  connection_info connection_details;
+  connection_handle connection;
+  std::once_flag connection_init_flag;
+
+  void
+  open_connection()
+  {
+    connection = connection_manager.open(connection_details);
+  }
+
+public:
+  X12(connection_info const& connection_details_)
+    : connection_details(connection_details_)
+  {
+  }
+
+  void
+  send_data(data_packet const& data) // 1
+  {
+    std::call_once(connection_init_flag, &X12::open_connection, this); // 2
+    connection.send_data(data);
+  }
+
+  data_packet
+  receive_data() // 3
+  {
+    std::call_once(connection_init_flag, &X12::open_connection, this); // 2
+    return connection.receive_data();
+  }
+};
+
+#endif
+
+#ifndef LISt_3_13
+#define LISt_3_13
+
+struct dns_entry
+{};
+
+class dns_cache
+{
+  std::map<std::string, dns_entry> entries;
+  mutable std::shared_mutex entry_mutex;
+
+public:
+  dns_entry
+  find_entry(std::string const& domain) const
+  {
+    std::shared_lock<std::shared_mutex> lk(entry_mutex); // 1
+
+    std::map<std::string, dns_entry>::const_iterator const it =
+      entries.find(domain);
+
+    return (it == entries.end()) ? dns_entry() : it->second;
+  }
+
+  void
+  update_or_add_entry(std::string const& domain, dns_entry const& dns_details)
+  {
+    std::lock_guard<std::shared_mutex> lk(entry_mutex); // 2
+    entries[domain] = dns_details;
+  }
+};
+
 #endif
