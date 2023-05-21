@@ -1,12 +1,16 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(chapte43)
+project(chapter4)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(SRC_FILE headers_ch4.h main_ch4.cpp)
+set(SRC_FILE main_ch4.cpp)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include_directories(
+  ../headers/
+)
 
 
 add_executable(a.out ${SRC_FILE})
