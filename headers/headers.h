@@ -1,6 +1,8 @@
-#pragma once
+#ifndef HEADERS_H_
+#define HEADERS_H_
 
 #include <algorithm>
+#include <atomic>
 #include <barrier>
 #include <chrono>
 #include <cmath>
@@ -17,3 +19,5 @@
 #include <shared_mutex>
 #include <thread>
 #include <vector>
+
+#endif
